@@ -15,7 +15,7 @@ struct ARViewContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> ARSCNView {
         
         let arView = ARSCNView(frame: .zero)
-        ARManager.shared.configure(session: arView.session)
+        ARManager.shared.configure(view: arView)
         return arView
         
     }
