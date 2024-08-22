@@ -24,9 +24,9 @@ struct ContentView : View {
                     ARManager.shared.clearData()
                 };
                 Spacer();
-                ShareLink(item: ARManager.shared.loadPath()) {
-                    Text(arManager.hasMesh ? "Share" : "Nothing to share yet")
-                }.allowsHitTesting(arManager.hasMesh);
+                ShareLink(item: ARManager.shared.loadPathUSDZ()) {
+                    Text(arManager.hasUsdz ? "Share" : "Nothing to share yet")
+                }.allowsHitTesting(arManager.hasUsdz);
                 Spacer();
                 
             })
@@ -38,7 +38,7 @@ struct ContentView : View {
             let itemsToShare = [textToShare]
             
             let activityViewController = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
-            UIApplication.shared.windows.first?.rootViewController?.present(activityViewController, animated: true, completion: nil)
+            UIApplication.shared.keyWindow?.rootViewController?.present(activityViewController, animated: true, completion: nil)
         }
 }
 

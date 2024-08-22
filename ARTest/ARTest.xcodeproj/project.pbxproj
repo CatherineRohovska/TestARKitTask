@@ -8,18 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		3253CE7D2C77075500683D90 /* ARManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3253CE7C2C77075500683D90 /* ARManager.swift */; };
-		3253CE7F2C775CF800683D90 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3253CE7E2C775CF800683D90 /* Extensions.swift */; };
+		3253CE7F2C775CF800683D90 /* ARExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3253CE7E2C775CF800683D90 /* ARExtensions.swift */; };
 		326688FD2C75BCD70021E2C3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 326688FC2C75BCD70021E2C3 /* AppDelegate.swift */; };
 		326688FF2C75BCD70021E2C3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 326688FE2C75BCD70021E2C3 /* ContentView.swift */; };
 		326689012C75BCD70021E2C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 326689002C75BCD70021E2C3 /* Assets.xcassets */; };
 		326689042C75BCD70021E2C3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 326689032C75BCD70021E2C3 /* Preview Assets.xcassets */; };
 		3266890B2C75C6C70021E2C3 /* ScanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3266890A2C75C6C70021E2C3 /* ScanningView.swift */; };
 		3266890D2C75C72D0021E2C3 /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3266890C2C75C72D0021E2C3 /* ARViewContainer.swift */; };
+		32ADAD7D2C7791CD008560A4 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ADAD7C2C7791CD008560A4 /* Colors.swift */; };
+		32ADAD7F2C77959D008560A4 /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ADAD7E2C77959D008560A4 /* UIApplication+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3253CE7C2C77075500683D90 /* ARManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARManager.swift; sourceTree = "<group>"; };
-		3253CE7E2C775CF800683D90 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		3253CE7E2C775CF800683D90 /* ARExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARExtensions.swift; sourceTree = "<group>"; };
 		326688F92C75BCD70021E2C3 /* ARTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		326688FC2C75BCD70021E2C3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		326688FE2C75BCD70021E2C3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -27,6 +29,8 @@
 		326689032C75BCD70021E2C3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3266890A2C75C6C70021E2C3 /* ScanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanningView.swift; sourceTree = "<group>"; };
 		3266890C2C75C72D0021E2C3 /* ARViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewContainer.swift; sourceTree = "<group>"; };
+		32ADAD7C2C7791CD008560A4 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		32ADAD7E2C77959D008560A4 /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +70,9 @@
 				326689022C75BCD70021E2C3 /* Preview Content */,
 				3266890C2C75C72D0021E2C3 /* ARViewContainer.swift */,
 				3253CE7C2C77075500683D90 /* ARManager.swift */,
-				3253CE7E2C775CF800683D90 /* Extensions.swift */,
+				3253CE7E2C775CF800683D90 /* ARExtensions.swift */,
+				32ADAD7C2C7791CD008560A4 /* Colors.swift */,
+				32ADAD7E2C77959D008560A4 /* UIApplication+Extension.swift */,
 			);
 			path = ARTest;
 			sourceTree = "<group>";
@@ -150,8 +156,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3266890B2C75C6C70021E2C3 /* ScanningView.swift in Sources */,
-				3253CE7F2C775CF800683D90 /* Extensions.swift in Sources */,
+				3253CE7F2C775CF800683D90 /* ARExtensions.swift in Sources */,
+				32ADAD7F2C77959D008560A4 /* UIApplication+Extension.swift in Sources */,
 				3266890D2C75C72D0021E2C3 /* ARViewContainer.swift in Sources */,
+				32ADAD7D2C7791CD008560A4 /* Colors.swift in Sources */,
 				326688FF2C75BCD70021E2C3 /* ContentView.swift in Sources */,
 				326688FD2C75BCD70021E2C3 /* AppDelegate.swift in Sources */,
 				3253CE7D2C77075500683D90 /* ARManager.swift in Sources */,

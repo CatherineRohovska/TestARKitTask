@@ -8,6 +8,9 @@
 import Foundation
 import ARKit
 import RealityKit
+import MetalKit
+let SIMD4_FLOAT_STRIDE = MemoryLayout<SIMD4<Float>>.stride
+let FLOAT_STRIDE = MemoryLayout<Float>.stride
 
 extension simd_float4x4 {
     var position: SIMD3<Float> {
@@ -15,32 +18,8 @@ extension simd_float4x4 {
     }
 }
 
-extension ARMeshClassification {
-    var description: String {
-        switch self {
-        case .ceiling: return "Ceiling"
-        case .door: return "Door"
-        case .floor: return "Floor"
-        case .seat: return "Seat"
-        case .table: return "Table"
-        case .wall: return "Wall"
-        case .window: return "Window"
-        case .none: return "None"
-        @unknown default: return "Unknown"
-        }
-    }
-    
-    var color: UIColor {
-        switch self {
-        case .ceiling: return .yellow
-        case .door: return .red
-        case .floor: return .green
-        case .wall: return .blue
-        case .window: return .white
-        default: return .gray
-        }
-    }
-}
+
+
 
 extension Transform {
     static func * (left: Transform, right: Transform) -> Transform {
@@ -95,34 +74,85 @@ extension ARMeshGeometry {
 
 extension  SCNGeometry {
     convenience init(arGeometry: ARMeshGeometry) {
-       let verticesSource = SCNGeometrySource(arGeometry.vertices, semantic: .vertex)
-       let normalsSource = SCNGeometrySource(arGeometry.normals, semantic: .normal)
-       let faces = SCNGeometryElement(arGeometry.faces)
-       self.init(sources: [verticesSource, normalsSource], elements: [faces])
+        let verticesSource = SCNGeometrySource(arGeometry.vertices, semantic: .vertex)
+        let normalsSource = SCNGeometrySource(arGeometry.normals, semantic: .normal)
+        let faces = SCNGeometryElement(arGeometry.faces)
+        self.init(sources: [verticesSource, normalsSource], elements: [faces])
+    }
+    
+    public static func fromAnchor(meshAnchor: ARMeshAnchor, setColors: Bool) -> SCNGeometry {
+        let meshGeometry = meshAnchor.geometry
+        let vertices = meshGeometry.vertices
+        let normals = meshGeometry.normals
+        let faces = meshGeometry.faces
+        
+        let vertexSource = SCNGeometrySource(buffer: vertices.buffer, vertexFormat: vertices.format, semantic: .vertex, vertexCount: vertices.count, dataOffset: vertices.offset, dataStride: vertices.stride)
+        
+        let normalsSource = SCNGeometrySource(buffer: normals.buffer, vertexFormat: normals.format, semantic: .normal, vertexCount: normals.count, dataOffset: normals.offset, dataStride: normals.stride)
+        
+        let faceData = Data(bytes: faces.buffer.contents(), count: faces.buffer.length)
+        
+        
+        let geometryElement = SCNGeometryElement(data: faceData, primitiveType: .of(faces.primitiveType), primitiveCount: faces.count, bytesPerIndex: faces.bytesPerIndex)
+        
+        
+        let geometry : SCNGeometry
+        
+        if setColors {
+            // calculate colors for each indivudal face, instead of the entire mesh
+            
+            var colors = [SIMD4<Float>]()
+            
+            for i in 0..<faces.count {
+                colors.append(meshGeometry.classificationOf(faceWithIndex: i).colorVector)
+            }
+            
+            let colorSource = SCNGeometrySource(data: Data(bytes: &colors, count: colors.count * SIMD4_FLOAT_STRIDE),
+                                                semantic: .color,
+                                                vectorCount: colors.count,
+                                                usesFloatComponents: true,
+                                                componentsPerVector: 4,
+                                                bytesPerComponent: FLOAT_STRIDE,
+                                                dataOffset: 0,
+                                                dataStride: SIMD4_FLOAT_STRIDE
+            )
+            
+            geometry = SCNGeometry(sources: [vertexSource, normalsSource, colorSource], elements: [geometryElement])
+        }
+        else {
+            geometry = SCNGeometry(sources: [vertexSource, normalsSource], elements: [geometryElement])
+        }
+        
+        geometry.firstMaterial?.fillMode = .lines // doesn't affect materials in actual model, they're solid, change this if you want actual material
+        
+        return geometry
     }
 }
+
 extension  SCNGeometrySource {
     convenience init(_ source: ARGeometrySource, semantic: Semantic) {
         self.init(buffer: source.buffer, vertexFormat: source.format, semantic: semantic, vertexCount: source.count, dataOffset: source.offset, dataStride: source.stride)
     }
 }
+
 extension  SCNGeometryElement {
     convenience init(_ source: ARGeometryElement) {
-       let pointer = source.buffer.contents()
-       let byteCount = source.count * source.indexCountPerPrimitive * source.bytesPerIndex
-       let data = Data(bytesNoCopy: pointer, count: byteCount, deallocator: .none)
-       self.init(data: data, primitiveType: .of(source.primitiveType), primitiveCount: source.count, bytesPerIndex: source.bytesPerIndex)
+        let pointer = source.buffer.contents()
+        let byteCount = source.count * source.indexCountPerPrimitive * source.bytesPerIndex
+        let data = Data(bytesNoCopy: pointer, count: byteCount, deallocator: .none)
+        self.init(data: data, primitiveType: .of(source.primitiveType), primitiveCount: source.count, bytesPerIndex: source.bytesPerIndex)
     }
 }
+
 extension  SCNGeometryPrimitiveType {
     static  func  of(_ type: ARGeometryPrimitiveType) -> SCNGeometryPrimitiveType {
-       switch type {
-       case .line:
+        switch type {
+        case .line:
             return .line
-       case .triangle:
+        case .triangle:
             return .triangles
-       @unknown default:
+        @unknown default:
             return .line
-       }
+        }
     }
 }
