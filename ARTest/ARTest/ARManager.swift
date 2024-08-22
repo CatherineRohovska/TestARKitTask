@@ -9,30 +9,99 @@ import Foundation
 import ARKit
 import SceneKit
 
-class ARManager : NSObject {
+class ARManager : NSObject, ObservableObject {
     static let shared = ARManager()
-    private var session: ARSession?
-    private var coloriser = Coloriser()
+    @Published var hasMesh = false
+    
+    private weak var session: ARSession?
+    private var worldMap: ARWorldMap?
+    private var scene: SCNScene?
     
     private override init() { }
     
     func configure(view: ARSCNView) {
         view.session.delegate = self
         view.delegate = self
+        
+        let url = loadPath()
+        
+        let modelRootNode = try? SCNScene(url: url, options: [.checkConsistency: true])
+        if (modelRootNode != nil) {
+            view.scene = modelRootNode!
+        }
+
+        
+        scene = view.scene
+        
         let configuration = ARWorldTrackingConfiguration()
         configuration.sceneReconstruction = .meshWithClassification
         configuration.environmentTexturing = .automatic
+        if (worldMap != nil) {
+            configuration.initialWorldMap = worldMap
+        }
         session = view.session
-        view.session.run(configuration, options: [.resetTracking, .removeExistingAnchors]);
+        
+        
+        view.session.run(configuration);
+    }
+    
+    func saveModel() {
+        let path = FileManager.default.urls(for: .documentDirectory,
+                                            in: .userDomainMask)[0]
+            .appendingPathComponent("model.usdz")
+        
+        scene?.write(to: path, delegate: nil);
+        hasMesh = true;
+    }
+    
+    func loadPath() -> URL {
+        let path = FileManager.default.urls(for: .documentDirectory,
+                                            in: .userDomainMask)[0]
+            .appendingPathComponent("model.usdz")
+        return path
+    }
+    
+    func clearModel() {
+        let path = FileManager.default.urls(for: .documentDirectory,
+                                            in: .userDomainMask)[0]
+            .appendingPathComponent("model.usdz")
+        do
+        {
+            try FileManager().removeItem(at: path)
+            hasMesh = false;
+        } catch {
+            debugPrint("Error occured")
+        }
+    }
+    
+    func clearData() {
+        session = nil;
+        scene = nil;
+        worldMap = nil;
+        clearModel()
+    }
+    
+    func stopSession(completionBlock: @escaping () -> Void) {
+        session?.getCurrentWorldMap(completionHandler: { map, error in
+            if (error != nil) {
+                debugPrint("An error occured")
+            } else {
+                self.worldMap = map
+            }
+            self.session?.pause()
+            self.saveModel()
+            completionBlock()
+        })
+        
     }
     
     func nearbyFaceWithClassification(to array: [ARMeshAnchor], completionBlock: @escaping (SIMD3<Float>?, ARMeshClassification) -> Void) {
-        guard let frame = session?.currentFrame else {
+        guard let _ = session?.currentFrame else {
             completionBlock(nil, .none)
             return
         }
         
-        var meshAnchors = array.compactMap({ $0 as? ARMeshAnchor })
+        let meshAnchors = array.compactMap({ $0 as? ARMeshAnchor })
         
         //        let cutoffDistance: Float = 2.0
         //        meshAnchors.removeAll { distance($0.transform.position, location) > cutoffDistance }
@@ -54,6 +123,9 @@ class ARManager : NSObject {
         }
     }
     
+    private func loadMeshes() {
+        
+    }
 }
 
 extension ARManager : ARSessionDelegate {
